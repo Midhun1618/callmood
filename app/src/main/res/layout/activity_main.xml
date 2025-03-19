@@ -14,15 +14,17 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:background="@drawable/topbar_grad"
             app:title="CallMood"
+            app:titleTextColor="@color/white"
+            android:textAppearance="@style/ToolbarTitleStyle"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+
 
         <!-- FrameLayout for Fragments -->
         <FrameLayout
