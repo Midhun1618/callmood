@@ -5,4 +5,29 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">20sp</item>
     </style>
+    <style name="dialerButton">
+        <item name="android:fontFamily">@font/boldonsefont</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:layout_width">80dp</item>
+        <item name="android:textColor">@color/yellow_highsat</item>
+        <item name="android:background">@drawable/dialer_button</item>
+        <item name="android:layout_margin">7dp</item>
+        <item name="android:shadowColor">@color/black</item>
+
+    </style>
+    <style name="dialnowButton">
+        <item name="android:fontFamily">@font/boldonsefont</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="backgroundTint">@color/green</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:layout_width">261dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/dialer_button</item>
+        <item name="android:layout_margin">7dp</item>
+        <item name="android:shadowColor">@color/black</item>
+    </style>
 </resources>

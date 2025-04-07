@@ -2,4 +2,19 @@
     <string name="app_name">CallMood</string>
     <string name="callmood">Call Mood</string>
     <string name="app_logo">App Logo</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dial_zero">0</string>
+    <string name="dial_ac">AC</string>
+    <string name="dial_nine">9</string>
+    <string name="dial_eight">8</string>
+    <string name="dial_seven">7</string>
+    <string name="dial_six">6</string>
+    <string name="dial_five">5</string>
+    <string name="dial_four">4</string>
+    <string name="dial_three">3</string>
+    <string name="dial_two">2</string>
+    <string name="dial_one">1</string>
+    <string name="dial_backspace"><![CDATA[<]]></string>
+    <string name="dialnow_emoji">📞</string>
 </resources>

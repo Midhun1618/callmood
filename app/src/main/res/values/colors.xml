@@ -7,5 +7,6 @@
     <color name="yellow_dark">#C3B42E</color>
     <color name="yellow_highsat">#FFBB0E</color>
     <color name="yellow_darksat">#D39C10</color>
+    <color name="green">#4FE60F</color>
     <color name="fontcolor">#2F2E2E</color>
 </resources>
