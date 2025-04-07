@@ -17,9 +17,10 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="85dp"
             android:background="@drawable/topbar_grad"
             app:title="CallMood"
+            android:paddingTop="20dp"
             app:titleTextColor="@color/white"
             android:textAppearance="@style/ToolbarTitleStyle"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>

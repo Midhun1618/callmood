@@ -4,6 +4,7 @@
         <item name="android:fontFamily">@font/boldonsefont</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">20sp</item>
+        <item name="backgroundTint">@color/yellow_highsat</item>
     </style>
     <style name="dialerButton">
         <item name="android:fontFamily">@font/boldonsefont</item>
