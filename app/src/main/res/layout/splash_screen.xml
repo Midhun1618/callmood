@@ -4,13 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="?attr/colorPrimary">
+    android:background="@color/yellow_highsat">
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:src="@drawable/ic_launcher_foreground"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/call_icon"
         android:contentDescription="@string/app_logo" />
 
     <TextView
