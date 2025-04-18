@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="85dp"
             android:background="@drawable/topbar_grad"
+            android:backgroundTint="@color/yellow_highsat"
             app:title="CallMood"
             android:paddingTop="20dp"
             app:titleTextColor="@color/white"

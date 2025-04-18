@@ -20,6 +20,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                android:textColor="@color/black"
                 android:layout_margin="15dp"
                 android:text="Dial"/>
         </LinearLayout>
