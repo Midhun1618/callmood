@@ -3,6 +3,7 @@ package com.project.myapplication
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,7 @@ class HomeFragment : Fragment() {
     lateinit var backspace: Button
     lateinit var dialnow: Button
     private var dialNumber = ""
+    private var audioRecorder: AudioRecorderHelper? = null
 
 
     override fun onCreateView(
@@ -105,11 +107,30 @@ class HomeFragment : Fragment() {
             }
         }
         dialnow.setOnClickListener {
+            audioRecorder = AudioRecorderHelper()
+            audioRecorder?.startRecording { audioBuffer ->
+                // Process audioBuffer (this is where ML will be used later)
+                Log.d("AudioBuffer", "Received buffer of size: ${audioBuffer.size}")
+            }
+
             val intent = Intent(Intent.ACTION_DIAL)
             intent.data = Uri.parse("tel:$dialNumber")
             startActivity(intent)
         }
         return view
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 101 && grantResults.isNotEmpty() &&
+            grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            // Permission granted, you're good to go
+        } else {
+            // Permission denied
+        }
     }
 
 }

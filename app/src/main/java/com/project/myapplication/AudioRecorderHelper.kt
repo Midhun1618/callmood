@@ -38,4 +38,11 @@ class AudioRecorderHelper {
             }
         }.also { it.start() }
     }
+    fun stopRecording() {
+        isRecording = false
+        audioRecord?.stop()
+        audioRecord?.release()
+        audioRecord = null
+        recordingThread = null
+    }
 }
