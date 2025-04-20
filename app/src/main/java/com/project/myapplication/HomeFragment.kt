@@ -50,9 +50,6 @@ class HomeFragment : Fragment() {
         backspace = view.findViewById(R.id.backspace)
         dialnow = view.findViewById(R.id.dialnow)
 
-
-
-
         d1.setOnClickListener{
             dialNumber+="1"
             dialview.text = dialNumber
