@@ -50,6 +50,10 @@ class HomeFragment : Fragment() {
         backspace = view.findViewById(R.id.backspace)
         dialnow = view.findViewById(R.id.dialnow)
 
+        if (requireContext().checkSelfPermission(android.Manifest.permission.RECORD_AUDIO)
+            != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(android.Manifest.permission.RECORD_AUDIO), 101)
+        }
         d1.setOnClickListener{
             dialNumber+="1"
             dialview.text = dialNumber
