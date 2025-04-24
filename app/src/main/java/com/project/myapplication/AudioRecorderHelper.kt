@@ -7,17 +7,16 @@ import android.media.MediaRecorder
 import android.util.Log
 import org.tensorflow.lite.support.audio.TensorAudio
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
+import org.tensorflow.lite.support.label.Category
 import java.util.Timer
 import java.util.TimerTask
-import org.tensorflow.lite.support.label.Category
 
 class AudioRecorderHelper {
-    private var audioRecord: AudioRecord? = null
     private var isRecording = false
-    private var recordingThread: Thread? = null
     private lateinit var audioClassifier: AudioClassifier
     private lateinit var tensorAudio: TensorAudio
-    private var timer: Timer? = null
+    private var classificationTimer: Timer? = null
+    private var tfliteAudioRecord: AudioRecord? = null
 
     private val sampleRate = 16000
     private val bufferSize = AudioRecord.getMinBufferSize(
@@ -27,12 +26,17 @@ class AudioRecorderHelper {
     )
 
     fun loadModel(context: Context) {
-        audioClassifier = AudioClassifier.createFromFile(context, "mood_model.tflite")
-        tensorAudio = audioClassifier.createInputTensorAudio()
+        try {
+            audioClassifier = AudioClassifier.createFromFile(context, "mood_model.tflite")
+            tensorAudio = audioClassifier.createInputTensorAudio()
+            tfliteAudioRecord = audioClassifier.createAudioRecord()
+        } catch (e: Exception) {
+            Log.e("AudioRecorderHelper", "Model loading failed: ${e.message}")
+        }
     }
 
     fun startRecording(onAudioBufferReceived: (ShortArray) -> Unit) {
-        audioRecord = AudioRecord(
+        val audioRecord = AudioRecord(
             MediaRecorder.AudioSource.MIC,
             sampleRate,
             AudioFormat.CHANNEL_IN_MONO,
@@ -40,50 +44,55 @@ class AudioRecorderHelper {
             bufferSize
         )
 
-        audioRecord?.startRecording()
         isRecording = true
+        audioRecord.startRecording()
 
-        recordingThread = Thread {
+        Thread {
             val buffer = ShortArray(bufferSize)
             while (isRecording) {
-                val read = audioRecord?.read(buffer, 0, buffer.size) ?: 0
+                val read = audioRecord.read(buffer, 0, buffer.size)
                 if (read > 0) {
                     onAudioBufferReceived(buffer.copyOf(read))
                 }
             }
-        }.also { it.start() }
+            audioRecord.stop()
+            audioRecord.release()
+        }.start()
     }
 
     fun stopRecording() {
         isRecording = false
-        audioRecord?.stop()
-        audioRecord?.release()
-        audioRecord = null
-        recordingThread = null
     }
 
     fun startClassification(onResult: (List<Category>) -> Unit) {
-        val audioRecord = audioClassifier.createAudioRecord()
-        audioRecord.startRecording()
+        try {
+            tfliteAudioRecord?.startRecording()
 
-        timer = Timer()
-        timer?.scheduleAtFixedRate(object : TimerTask() {
-            override fun run() {
-                tensorAudio.load(audioRecord)
-                val results = audioClassifier.classify(tensorAudio)
-                val categories = results[0].categories
-                onResult(categories)
-            }
-        }, 0, 1000) // Every second
+            classificationTimer = Timer()
+            classificationTimer?.scheduleAtFixedRate(object : TimerTask() {
+                override fun run() {
+                    try {
+                        tensorAudio.load(tfliteAudioRecord)
+                        val results = audioClassifier.classify(tensorAudio)
+                        val categories = results[0].categories
+                        onResult(categories)
+                    } catch (e: Exception) {
+                        Log.e("AudioRecorderHelper", "Classification error: ${e.message}")
+                    }
+                }
+            }, 0, 1000) // Every second
+        } catch (e: Exception) {
+            Log.e("AudioRecorderHelper", "Error starting classification: ${e.message}")
+        }
     }
 
     fun stopClassification() {
-        timer?.cancel()
-        timer = null
+        classificationTimer?.cancel()
+        classificationTimer = null
         try {
-            audioClassifier.createAudioRecord().stop()
+            tfliteAudioRecord?.stop()
         } catch (e: Exception) {
-            Log.e("AudioRecorderHelper", "Error stopping AudioRecord: ${e.message}")
+            Log.e("AudioRecorderHelper", "Error stopping classification: ${e.message}")
         }
     }
 }

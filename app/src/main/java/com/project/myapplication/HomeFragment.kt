@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.content.Context
-
+import android.widget.Toast
 
 
 class HomeFragment : Fragment() {
@@ -130,18 +130,19 @@ class HomeFragment : Fragment() {
         if (requestCode == 101 && grantResults.isNotEmpty() &&
             grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
             // Permission granted, you're good to go
-            val audioHelper = AudioRecorderHelper()
-            audioHelper.loadModel(requireContext())
-            audioHelper.startClassification { categories ->
+            audioRecorder = AudioRecorderHelper()
+            audioRecorder?.loadModel(requireContext())
+            audioRecorder?.startClassification { categories ->
                 val top = categories.maxByOrNull { it.score }
                 top?.let {
                     Log.d("CallMood", "Detected mood: ${it.label} (${it.score})")
-                    // You can show it in UI or take action
+                    view?.findViewById<TextView>(R.id.mood_label)?.text = "Mood: ${it.label}"
                 }
             }
 
-        } else {
-            // Permission denied
+        }
+        else {
+            Toast.makeText(this,"permission denied",Toast.LENGTH_SHORT).show()
         }
 
     }

@@ -12,8 +12,20 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:gravity="center">
+            android:layout_height="150dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:id="@+id/mood_label"
+                android:padding="10dp"
+                android:background="@drawable/moodlabel_bg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mood : Analysing.."/>
+
             <TextView
                 android:id="@+id/dialview"
                 android:layout_width="wrap_content"
@@ -22,7 +34,8 @@
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:layout_margin="15dp"
-                android:text="Dial"/>
+                android:text="Dial"
+                android:paddingTop="15dp"/>
         </LinearLayout>
 
         <LinearLayout
