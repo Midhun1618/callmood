@@ -142,7 +142,6 @@ class HomeFragment : Fragment() {
 
         }
         else {
-            Toast.makeText(this,"permission denied",Toast.LENGTH_SHORT).show()
         }
 
     }

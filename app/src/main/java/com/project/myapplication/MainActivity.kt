@@ -11,47 +11,53 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var audioRecorderHelper: AudioRecorderHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        audioRecorderHelper = AudioRecorderHelper()
+        audioRecorderHelper.loadModel(this)
 
-        // Check and request all necessary permissions
-        val permissions = arrayOf(
-            android.Manifest.permission.READ_PHONE_STATE,
-            android.Manifest.permission.RECORD_AUDIO,
-            android.Manifest.permission.PROCESS_OUTGOING_CALLS
-        )
+        audioRecorderHelper.startRecording { audioBuffer ->
+            val features = extractFeatures(audioBuffer)
+            val moodAnalyzer = MoodAnalyzer(this)
 
-        val permissionsToRequest = permissions.filter {
-            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
-        }
+            val mood = moodAnalyzer.predictMood(features)
 
-        if (permissionsToRequest.isNotEmpty()) {
-            ActivityCompat.requestPermissions(this, permissionsToRequest.toTypedArray(), 101)
-        }
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.frame_container, HomeFragment())
-            .commit()
-    }
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 101) {
-            val allGranted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
-            if (!allGranted) {
-                Toast.makeText(this, "All permissions are required for mood detection.", Toast.LENGTH_LONG).show()
+            runOnUiThread {
+                updateMoodUI(mood)
             }
         }
+
+        audioRecorderHelper.startClassification { categories ->
+            val detectedMood = categories[0].label
+            updateMoodUI(detectedMood)
+        }
+    }
+
+    private fun updateMoodUI(mood: String) {
+        when (mood) {
+            "Happy" -> {
+                Toast.makeText(this, "Happy mood detected!", Toast.LENGTH_SHORT).show()
+            }
+            "Sad" -> {
+                Toast.makeText(this, "Sad mood detected!", Toast.LENGTH_SHORT).show()
+            }
+            "Angry" -> {
+                Toast.makeText(this, "Angry mood detected!", Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+                Toast.makeText(this, "Unknown mood detected!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun extractFeatures(audioBuffer: ShortArray): FloatArray {
+
+        val mfccFeatures = FloatArray(13)
+        return mfccFeatures
     }
 }
