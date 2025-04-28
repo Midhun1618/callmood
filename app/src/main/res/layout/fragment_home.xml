@@ -16,15 +16,7 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:id="@+id/mood_label"
-                android:padding="10dp"
-                android:background="@drawable/moodlabel_bg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mood : Analysing.."/>
+
 
             <TextView
                 android:id="@+id/dialview"

@@ -25,6 +25,17 @@
             app:titleTextColor="@color/white"
             android:textAppearance="@style/ToolbarTitleStyle"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        <TextView
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:id="@+id/mood_label"
+            android:padding="10dp"
+            android:layout_margin="2dp"
+            android:layout_gravity="center"
+            android:background="@drawable/moodlabel_bg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mood : Analysing.."/>
 
 
 

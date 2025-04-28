@@ -1,4 +1,4 @@
-package com.yourpackage.name
+package com.project.myapplication
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -52,12 +52,30 @@ class CallReceiver : BroadcastReceiver() {
                         release()
                         Log.d("CallReceiver", "Recording stopped")
                         // You can now analyze the file at outputFilePath
+                        outputFilePath?.let { analyzeMood(context, it) }
                     } catch (e: Exception) {
                         Log.e("CallReceiver", "Stop recording error: ${e.message}")
                     }
                 }
                 recorder = null
             }
+        }
+    }
+
+    // Function to analyze the mood of the recorded audio
+    private fun analyzeMood(context: Context, audioFilePath: String) {
+        val moodAnalyzer = MoodAnalyzer(context)
+        val mood = moodAnalyzer.analyzeMood(audioFilePath)
+        showRecommendation(mood)
+        moodAnalyzer.close()
+    }
+
+    // Function to show recommendation based on the mood
+    private fun showRecommendation(mood: String) {
+        when (mood) {
+            "positive" -> Log.d("CallReceiver", "Recommendation: Play calming music or positive feedback.")
+            "negative" -> Log.d("CallReceiver", "Recommendation: Suggesting uplifting content or guidance.")
+            else -> Log.d("CallReceiver", "Recommendation: Neutral, no action required.")
         }
     }
 }

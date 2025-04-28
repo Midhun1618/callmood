@@ -16,6 +16,7 @@ import android.widget.Toast
 
 class HomeFragment : Fragment() {
     lateinit var dialview: TextView
+    lateinit var moodLabel: TextView
     lateinit var d1: Button
     lateinit var d2: Button
     lateinit var d3: Button
@@ -31,7 +32,6 @@ class HomeFragment : Fragment() {
     lateinit var dialnow: Button
     private var dialNumber = ""
     private var audioRecorder: AudioRecorderHelper? = null
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,72 +55,86 @@ class HomeFragment : Fragment() {
         dialnow = view.findViewById(R.id.dialnow)
 
         if (requireContext().checkSelfPermission(android.Manifest.permission.RECORD_AUDIO)
-            != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            != android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
             requestPermissions(arrayOf(android.Manifest.permission.RECORD_AUDIO), 101)
+        } else {
+            audioRecorder = AudioRecorderHelper()
+            audioRecorder?.loadModel(requireContext())
         }
-        d1.setOnClickListener{
-            dialNumber+="1"
+
+        d1.setOnClickListener {
+            dialNumber += "1"
             dialview.text = dialNumber
         }
-        d2.setOnClickListener{
-            dialNumber+="2"
+        d2.setOnClickListener {
+            dialNumber += "2"
             dialview.text = dialNumber
         }
-        d3.setOnClickListener{
-            dialNumber+="3"
+        d3.setOnClickListener {
+            dialNumber += "3"
             dialview.text = dialNumber
         }
-        d4.setOnClickListener{
-            dialNumber+="4"
+        d4.setOnClickListener {
+            dialNumber += "4"
             dialview.text = dialNumber
         }
-        d5.setOnClickListener{
-            dialNumber+="5"
+        d5.setOnClickListener {
+            dialNumber += "5"
             dialview.text = dialNumber
         }
-        d6.setOnClickListener{
-            dialNumber+="6"
+        d6.setOnClickListener {
+            dialNumber += "6"
             dialview.text = dialNumber
         }
-        d7.setOnClickListener{
-            dialNumber+="7"
+        d7.setOnClickListener {
+            dialNumber += "7"
             dialview.text = dialNumber
         }
-        d8.setOnClickListener{
-            dialNumber+="8"
+        d8.setOnClickListener {
+            dialNumber += "8"
             dialview.text = dialNumber
         }
-        d9.setOnClickListener{
-            dialNumber+="9"
+        d9.setOnClickListener {
+            dialNumber += "9"
             dialview.text = dialNumber
         }
-        d0.setOnClickListener{
-            dialNumber+= "0"
+        d0.setOnClickListener {
+            dialNumber += "0"
             dialview.text = dialNumber
         }
+
         ac_dial.setOnClickListener {
             dialNumber = ""
             dialview.text = dialNumber
         }
+
         backspace.setOnClickListener {
             if (dialNumber.isNotEmpty()) {
                 dialNumber = dialNumber.substring(0, dialNumber.length - 1)
                 dialview.text = dialNumber
             }
         }
-        dialnow.setOnClickListener {
-            audioRecorder = AudioRecorderHelper()
-            audioRecorder?.startRecording { audioBuffer ->
-                // Process audioBuffer (this is where ML will be used later)
-                Log.d("AudioBuffer", "Received buffer of size: ${audioBuffer.size}")
-            }
 
-            val intent = Intent(Intent.ACTION_DIAL)
-            intent.data = Uri.parse("tel:$dialNumber")
-            startActivity(intent)
+        dialnow.setOnClickListener {
+            audioRecorder?.startClassification { categories ->
+                val top = categories.maxByOrNull { it.score }
+                top?.let {
+                    requireActivity().runOnUiThread {
+                        moodLabel.text = "Mood: ${it.label}"
+                        Log.d("CallMood", "Detected mood: ${it.label} (${it.score})")
+                    }
+                }
+
+                val intent = Intent(Intent.ACTION_DIAL)
+                intent.data = Uri.parse("tel:$dialNumber")
+                startActivity(intent)
+            }
         }
+
         return view
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -128,22 +142,10 @@ class HomeFragment : Fragment() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 101 && grantResults.isNotEmpty() &&
-            grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            // Permission granted, you're good to go
+            grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
             audioRecorder = AudioRecorderHelper()
             audioRecorder?.loadModel(requireContext())
-            audioRecorder?.startClassification { categories ->
-                val top = categories.maxByOrNull { it.score }
-                top?.let {
-                    Log.d("CallMood", "Detected mood: ${it.label} (${it.score})")
-                    view?.findViewById<TextView>(R.id.mood_label)?.text = "Mood: ${it.label}"
-                }
-            }
-
         }
-        else {
-        }
-
     }
-
 }

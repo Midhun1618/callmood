@@ -1,63 +1,67 @@
 package com.project.myapplication
 
+import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var audioRecorderHelper: AudioRecorderHelper
+    private val PERMISSION_REQUEST_CODE = 123
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        audioRecorderHelper = AudioRecorderHelper()
-        audioRecorderHelper.loadModel(this)
+        // Check and request runtime permissions
+        checkPermissions()
+    }
 
-        audioRecorderHelper.startRecording { audioBuffer ->
-            val features = extractFeatures(audioBuffer)
-            val moodAnalyzer = MoodAnalyzer(this)
+    // Function to check and request permissions
+    private fun checkPermissions() {
+        val permissions = arrayOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_PHONE_STATE
+        )
 
-            val mood = moodAnalyzer.predictMood(features)
-
-            runOnUiThread {
-                updateMoodUI(mood)
-            }
+        val permissionsToRequest = permissions.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
         }
 
-        audioRecorderHelper.startClassification { categories ->
-            val detectedMood = categories[0].label
-            updateMoodUI(detectedMood)
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                this, permissionsToRequest.toTypedArray(), PERMISSION_REQUEST_CODE
+            )
+        } else {
+            // Permissions already granted
+            Log.d("Permissions", "All permissions granted")
         }
     }
 
-    private fun updateMoodUI(mood: String) {
-        when (mood) {
-            "Happy" -> {
-                Toast.makeText(this, "Happy mood detected!", Toast.LENGTH_SHORT).show()
-            }
-            "Sad" -> {
-                Toast.makeText(this, "Sad mood detected!", Toast.LENGTH_SHORT).show()
-            }
-            "Angry" -> {
-                Toast.makeText(this, "Angry mood detected!", Toast.LENGTH_SHORT).show()
-            }
-            else -> {
-                Toast.makeText(this, "Unknown mood detected!", Toast.LENGTH_SHORT).show()
+    // Handle the result of permission request
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                // Permissions granted, proceed with functionality
+                Log.d("Permissions", "All permissions granted")
+                Toast.makeText(this, "Permissions granted", Toast.LENGTH_SHORT).show()
+            } else {
+                // Handle the case where some or all permissions are denied
+                Log.d("Permissions", "Some permissions are denied")
+                Toast.makeText(this, "Permissions denied", Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    private fun extractFeatures(audioBuffer: ShortArray): FloatArray {
-
-        val mfccFeatures = FloatArray(13)
-        return mfccFeatures
     }
 }

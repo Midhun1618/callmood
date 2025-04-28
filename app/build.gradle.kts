@@ -26,26 +26,41 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
 }
 
 dependencies {
-
+    // AndroidX Libraries
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+    // Testing Libraries
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(libs.tensorflow.lite)
-    implementation(libs.tensorflow.lite.support)
+
+    // TensorFlow Lite and Audio Libraries
     implementation(libs.tensorflow.lite.task.audio)
+
+    // TarsosDSP for Audio Processing
+
+        implementation(libs.tensorflow.lite) {
+            exclude(group = "org.tensorflow", module = "tensorflow-lite-support")
+        }
+        implementation(libs.tensorflow.lite.support) {
+            exclude(group = "org.tensorflow", module = "tensorflow-lite")
+        }
+
+
 }
