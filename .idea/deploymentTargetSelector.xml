@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-04-25T18:04:25.498161200Z">
+        <DropdownSelection timestamp="2025-04-28T12:16:33.861408100Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\sivaf\.android\avd\ClonePhone.avd" />

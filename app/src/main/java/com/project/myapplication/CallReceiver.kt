@@ -1,81 +1,78 @@
 package com.project.myapplication
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Environment
 import android.telephony.TelephonyManager
 import android.util.Log
+import androidx.core.content.ContextCompat
 import java.io.File
-import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class CallReceiver : BroadcastReceiver() {
 
     private var recorder: MediaRecorder? = null
-    private var outputFilePath: String? = null
 
     override fun onReceive(context: Context, intent: Intent) {
         val state = intent.getStringExtra(TelephonyManager.EXTRA_STATE)
-        Log.d("CallReceiver", "Phone state changed: $state")
 
-        when (state) {
-            TelephonyManager.EXTRA_STATE_OFFHOOK -> {
-                // Call started
-                Log.d("CallReceiver", "Call started — starting mic recording")
+        if (state == TelephonyManager.EXTRA_STATE_OFFHOOK) {
+            Log.d("CallReceiver", "Call started")
 
-                val dir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
-                outputFilePath = "${dir?.absolutePath}/call_mood_record.3gp"
-
-                recorder = MediaRecorder().apply {
-                    setAudioSource(MediaRecorder.AudioSource.MIC) // Only your voice
-                    setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-                    setOutputFile(outputFilePath)
-                    setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-                    try {
-                        prepare()
-                        start()
-                        Log.d("CallReceiver", "Recording started at $outputFilePath")
-                    } catch (e: IOException) {
-                        Log.e("CallReceiver", "Recording error: ${e.message}")
-                    }
-                }
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                startRecording(context)
+            } else {
+                Log.d("CallReceiver", "RECORD_AUDIO permission not granted. Skipping recording.")
             }
-
-            TelephonyManager.EXTRA_STATE_IDLE -> {
-                // Call ended
-                Log.d("CallReceiver", "Call ended — stopping recording")
-
-                recorder?.apply {
-                    try {
-                        stop()
-                        release()
-                        Log.d("CallReceiver", "Recording stopped")
-                        // You can now analyze the file at outputFilePath
-                        outputFilePath?.let { analyzeMood(context, it) }
-                    } catch (e: Exception) {
-                        Log.e("CallReceiver", "Stop recording error: ${e.message}")
-                    }
-                }
-                recorder = null
-            }
+        } else if (state == TelephonyManager.EXTRA_STATE_IDLE) {
+            Log.d("CallReceiver", "Call ended")
+            stopRecording()
         }
     }
 
-    // Function to analyze the mood of the recorded audio
-    private fun analyzeMood(context: Context, audioFilePath: String) {
-        val moodAnalyzer = MoodAnalyzer(context)
-        val mood = moodAnalyzer.analyzeMood(audioFilePath)
-        showRecommendation(mood)
-        moodAnalyzer.close()
+    private fun startRecording(context: Context) {
+        try {
+            val outputDir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
+            if (outputDir != null && !outputDir.exists()) {
+                outputDir.mkdirs()
+            }
+
+            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val outputFile = File(outputDir, "call_recording_$timestamp.3gp")
+
+            recorder = MediaRecorder().apply {
+                setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
+                setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+                setOutputFile(outputFile.absolutePath)
+                prepare()
+                start()
+            }
+
+            Log.d("CallReceiver", "Recording started at ${outputFile.absolutePath}")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("CallReceiver", "Recording failed: ${e.message}")
+        }
     }
 
-    // Function to show recommendation based on the mood
-    private fun showRecommendation(mood: String) {
-        when (mood) {
-            "positive" -> Log.d("CallReceiver", "Recommendation: Play calming music or positive feedback.")
-            "negative" -> Log.d("CallReceiver", "Recommendation: Suggesting uplifting content or guidance.")
-            else -> Log.d("CallReceiver", "Recommendation: Neutral, no action required.")
+    private fun stopRecording() {
+        try {
+            recorder?.apply {
+                stop()
+                release()
+            }
+            recorder = null
+            Log.d("CallReceiver", "Recording stopped")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("CallReceiver", "Stop recording failed: ${e.message}")
         }
     }
 }

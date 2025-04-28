@@ -8,80 +8,102 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
-    private val PERMISSION_REQUEST_CODE = 123
+    companion object {
+        private const val PERMISSION_REQUEST_CODE = 100
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Check and request runtime permissions
-        checkPermissions()
+        checkAndRequestPermissions()
     }
 
-    // Function to check and request permissions
-    private fun checkPermissions() {
+    private fun checkAndRequestPermissions() {
+        val permissionsNeeded = mutableListOf<String>()
         val permissions = arrayOf(
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_PHONE_STATE
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.RECORD_AUDIO
         )
 
-        val permissionsToRequest = permissions.filter {
-            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        for (permission in permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                permissionsNeeded.add(permission)
+            }
         }
 
-        if (permissionsToRequest.isNotEmpty()) {
-            // Request permissions
-            ActivityCompat.requestPermissions(
-                this, permissionsToRequest.toTypedArray(), PERMISSION_REQUEST_CODE
-            )
+        if (permissionsNeeded.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, permissionsNeeded.toTypedArray(), PERMISSION_REQUEST_CODE)
         } else {
-            // Permissions already granted
-            Log.d("Permissions", "All permissions granted")
+            startAppFunctionality()
         }
     }
 
-    // Handle the result of permission request
     override fun onRequestPermissionsResult(
         requestCode: Int,
-        permissions: Array<String>,  // Change here
+        permissions: Array<out String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                // Permissions granted, proceed with functionality
-                Log.d("Permissions", "All permissions granted")
-                Toast.makeText(this, "Permissions granted", Toast.LENGTH_SHORT).show()
+            val deniedPermissions = mutableListOf<String>()
+
+            for (i in permissions.indices) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    deniedPermissions.add(permissions[i])
+                    Log.d("Permission", "Permission denied: ${permissions[i]}")
+                }
+            }
+
+            if (deniedPermissions.isEmpty()) {
+                startAppFunctionality()
             } else {
-                // Handle the case where some or all permissions are denied
-                if (permissions.any { !ActivityCompat.shouldShowRequestPermissionRationale(this, it) }) {
-                    // If the user denied the permission permanently (Don't ask again checked)
-                    Log.d("Permissions", "Permissions denied permanently")
-                    Toast.makeText(this, "Please enable permissions in settings", Toast.LENGTH_SHORT).show()
-                    redirectToAppSettings()
+                for (permission in deniedPermissions) {
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+                        Log.d("Permission", "Permission permanently denied: $permission")
+                        showPermissionSettingsDialog(permission)
+                    }
+                }
+
+                if (!deniedPermissions.contains(Manifest.permission.RECORD_AUDIO)) {
+                    startLimitedFunctionality()
                 } else {
-                    Log.d("Permissions", "Some permissions are denied")
-                    Toast.makeText(this, "Permissions denied", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "App needs required permissions to work properly.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    // Redirect user to app settings if permissions are permanently denied
-    private fun redirectToAppSettings() {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-        val uri = Uri.fromParts("package", packageName, null)
-        intent.data = uri
-        startActivity(intent)
+    private fun showPermissionSettingsDialog(permission: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Permission Required")
+        builder.setMessage("The app needs $permission to work properly. Please enable it in settings.")
+
+        builder.setPositiveButton("Go to Settings") { dialog, _ ->
+            dialog.dismiss()
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            intent.data = Uri.parse("package:$packageName")
+            startActivity(intent)
+        }
+        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+        builder.show()
+    }
+
+    private fun startAppFunctionality() {
+        Log.d("App", "Starting FULL functionality...")
+        // Full features of your app (e.g., call monitoring + voice recording)
+    }
+
+    private fun startLimitedFunctionality() {
+        Log.d("App", "Starting LIMITED functionality (no recording)...")
+        // App works without RECORD_AUDIO (like only showing call info)
     }
 }
