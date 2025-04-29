@@ -28,11 +28,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        viewpager =findViewById(R.id.viewpager)
-        tab =findViewById(R.id.tablayout)
+        viewpager = findViewById(R.id.viewpager)
+        tab = findViewById(R.id.tablayout)
         viewpager.adapter = SwipeAdapter(this)
 
-        TabLayoutMediator(tab,viewpager){tab,position ->
+        TabLayoutMediator(tab, viewpager) { tab, position ->
             val v = SwipeAdapter(this)
             tab.text = v.getTabTitle(position)
         }.attach()
