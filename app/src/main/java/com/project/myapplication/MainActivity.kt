@@ -84,17 +84,21 @@ class MainActivity : AppCompatActivity() {
                     if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
                         Log.d("Permission", "Permission permanently denied: $permission")
                         showPermissionSettingsDialog(permission)
+                    } else {
+                        Log.d("Permission", "Permission temporarily denied: $permission")
                     }
                 }
 
-                if (!deniedPermissions.contains(Manifest.permission.RECORD_AUDIO)) {
-                    startLimitedFunctionality()
+                // Check if the required permissions are denied
+                if (deniedPermissions.contains(Manifest.permission.RECORD_AUDIO)) {
+                    Toast.makeText(this, "App needs audio recording permission to work properly.", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this, "App needs required permissions to work properly.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Some permissions were denied.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
+
 
     private fun showPermissionSettingsDialog(permission: String) {
         val builder = AlertDialog.Builder(this)
@@ -113,11 +117,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun startAppFunctionality() {
         Log.d("App", "Starting FULL functionality...")
-        // Full features of your app (e.g., call monitoring + voice recording)
     }
 
     private fun startLimitedFunctionality() {
         Log.d("App", "Starting LIMITED functionality (no recording)...")
-        // App works without RECORD_AUDIO (like only showing call info)
     }
 }
