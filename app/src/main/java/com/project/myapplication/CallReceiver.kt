@@ -11,6 +11,7 @@ import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.core.content.ContextCompat
 import java.io.File
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -18,61 +19,47 @@ import java.util.Locale
 class CallReceiver : BroadcastReceiver() {
 
     private var recorder: MediaRecorder? = null
+    private var outputFilePath: String = ""
 
-    override fun onReceive(context: Context, intent: Intent) {
+    override fun onReceive(context: Context?, intent: Intent?) {
+        if (intent == null || context == null) return
+
         val state = intent.getStringExtra(TelephonyManager.EXTRA_STATE)
 
-        if (state == TelephonyManager.EXTRA_STATE_OFFHOOK) {
-            Log.d("CallReceiver", "Call started")
-
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+        when (state) {
+            TelephonyManager.EXTRA_STATE_OFFHOOK -> {
                 startRecording(context)
-            } else {
-                Log.d("CallReceiver", "RECORD_AUDIO permission not granted. Skipping recording.")
             }
-        } else if (state == TelephonyManager.EXTRA_STATE_IDLE) {
-            Log.d("CallReceiver", "Call ended")
-            stopRecording()
+            TelephonyManager.EXTRA_STATE_IDLE -> {
+                stopRecording()
+            }
         }
     }
 
     private fun startRecording(context: Context) {
-        try {
-            val outputDir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
-            if (outputDir != null && !outputDir.exists()) {
-                outputDir.mkdirs()
-            }
+        val fileName = "call_recording_${System.currentTimeMillis()}.3gp"
+        outputFilePath = "${context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)?.absolutePath}/$fileName"
 
-            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val outputFile = File(outputDir, "call_recording_$timestamp.3gp")
+        recorder = MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            setOutputFile(outputFilePath)
 
-            recorder = MediaRecorder().apply {
-                setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
-                setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-                setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-                setOutputFile(outputFile.absolutePath)
+            try {
                 prepare()
                 start()
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
-
-            Log.d("CallReceiver", "Recording started at ${outputFile.absolutePath}")
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.e("CallReceiver", "Recording failed: ${e.message}")
         }
     }
 
     private fun stopRecording() {
-        try {
-            recorder?.apply {
-                stop()
-                release()
-            }
-            recorder = null
-            Log.d("CallReceiver", "Recording stopped")
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.e("CallReceiver", "Stop recording failed: ${e.message}")
+        recorder?.apply {
+            stop()
+            release()
         }
+        recorder = null
     }
 }

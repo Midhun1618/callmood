@@ -17,7 +17,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="85dp"
+            android:layout_height="70dp"
             android:background="@drawable/topbar_grad"
             android:backgroundTint="@color/yellow_highsat"
             app:title="CallMood"
@@ -25,25 +25,42 @@
             app:titleTextColor="@color/white"
             android:textAppearance="@style/ToolbarTitleStyle"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-        <TextView
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:id="@+id/mood_label"
-            android:padding="10dp"
-            android:layout_margin="2dp"
-            android:layout_gravity="center"
-            android:background="@drawable/moodlabel_bg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mood : Analysing.."/>
+<!--        <TextView-->
+<!--            android:textStyle="bold"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:id="@+id/mood_label"-->
+<!--            android:padding="10dp"-->
+<!--            android:layout_margin="2dp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:background="@drawable/moodlabel_bg"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Mood : Analysing.."/>-->
 
 
 
         <!-- FrameLayout for Fragments -->
-        <FrameLayout
-            android:id="@+id/frame_container"
+<!--        <FrameLayout-->
+<!--            android:id="@+id/frame_container"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"/>-->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tablayout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:layout_constraintTop_toTopOf="@+id/viewpager"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
+            android:backgroundTint="@color/white"
+            app:tabTextColor="@color/yellow_highsat">
+
+        </com.google.android.material.tabs.TabLayout>
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
+
     </LinearLayout>
 
     <!-- Navigation Drawer -->

@@ -37,6 +37,18 @@
             android:background="@drawable/dialer_bg"
             android:gravity="center">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/yellow_highsat"
+                android:layout_margin="15dp"
+                android:padding="10dp"
+                android:background="@drawable/whitebground"
+                android:text="Mood : Analysing"
+                android:id="@+id/moodLabel"/>
+
             <GridLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

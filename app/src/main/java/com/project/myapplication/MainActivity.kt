@@ -7,13 +7,19 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
+    lateinit var viewpager : ViewPager2
+    lateinit var tab : TabLayout
 
     companion object {
         private const val PERMISSION_REQUEST_CODE = 100
@@ -22,6 +28,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        viewpager =findViewById(R.id.viewpager)
+        tab =findViewById(R.id.tablayout)
+        viewpager.adapter = SwipeAdapter(this)
+
+        TabLayoutMediator(tab,viewpager){tab,position ->
+            val v = SwipeAdapter(this)
+            tab.text = v.getTabTitle(position)
+        }.attach()
 
         checkAndRequestPermissions()
     }

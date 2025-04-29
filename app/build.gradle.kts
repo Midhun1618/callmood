@@ -55,12 +55,12 @@ dependencies {
 
     // TarsosDSP for Audio Processing
 
-        implementation(libs.tensorflow.lite) {
-            exclude(group = "org.tensorflow", module = "tensorflow-lite-support")
-        }
-        implementation(libs.tensorflow.lite.support) {
-            exclude(group = "org.tensorflow", module = "tensorflow-lite")
-        }
+    implementation(libs.tensorflow.lite) {
+        exclude(group = "org.tensorflow", module = "tensorflow-lite-support")
+    }
+    implementation(libs.tensorflow.lite.support) {
+        exclude(group = "org.tensorflow", module = "tensorflow-lite")
+    }
 
 
 }

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:id="@+id/settingsfrag"
+    tools:context=".SettingsFragment"
+    android:padding="15dp"
+    android:background="@android:color/white">
+
+
+
+    <CheckBox
+        android:id="@+id/chk_notifications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enable Notification"
+        android:checked="false"
+        android:layout_marginBottom="16dp" />
+    <CheckBox
+        android:id="@+id/checkboxSaveAudio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Call Audio"
+        android:checked="false"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Mood Sensitivity Label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mood Sensitivity"
+        android:textColor="@color/black"
+        android:padding="15dp"
+        android:textSize="16sp" />
+
+
+    <!-- Mood Sensitivity SeekBar -->
+    <SeekBar
+        android:id="@+id/seekBarSensitivity"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:max="10"
+        android:progress="5"
+        android:indeterminateTint="@color/yellow_highsat"
+        android:progressTint="@color/yellow_highsat" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="300dp"/>
+    <!-- Developer Info -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="About CallMood"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginTop="24dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Version 1.0\nDeveloped by Midhun"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
+    <Button
+        android:id="@+id/buttonKnowDeveloper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Know the Developer"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/yellow_highsat"
+        android:textColor="@android:color/white"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="12dp" />
+
+
+</LinearLayout>
