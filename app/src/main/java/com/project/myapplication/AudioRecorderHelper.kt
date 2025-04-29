@@ -5,6 +5,7 @@ import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.util.Log
+import android.widget.Toast
 import org.tensorflow.lite.support.audio.TensorAudio
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 import org.tensorflow.lite.support.label.Category
@@ -30,7 +31,7 @@ class AudioRecorderHelper {
     fun loadModel(context: Context) {
         try {
             // Load the model from the assets directory asynchronously
-            audioClassifier = AudioClassifier.createFromFile(context, "mood_model.tflite")
+            val audioClassifier = AudioClassifier.createFromFile(context, "tiny_yolo.tflite")
 
             // Initialize tensorAudio and AudioRecord
             tensorAudio = audioClassifier.createInputTensorAudio()
