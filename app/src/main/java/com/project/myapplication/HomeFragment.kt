@@ -20,6 +20,7 @@ import java.util.Locale
 class HomeFragment : Fragment() {
     lateinit var dialview: TextView
     lateinit var moodLabel: TextView
+    lateinit var suggestion: TextView
     lateinit var d1: Button
     lateinit var d2: Button
     lateinit var d3: Button
@@ -47,6 +48,7 @@ class HomeFragment : Fragment() {
 
         dialview = view.findViewById(R.id.dialview)
         moodLabel = view.findViewById(R.id.moodLabel)
+        suggestion = view.findViewById(R.id.suggestion)
 
         d1 = view.findViewById(R.id.d1)
         d2 = view.findViewById(R.id.d2)
@@ -76,36 +78,28 @@ class HomeFragment : Fragment() {
             }
 
             override fun onReadyForSpeech(params: Bundle?) {
-                // Optional: You can log or display something when speech recognition is ready
-            }
+                  }
 
             override fun onBeginningOfSpeech() {
-                // Optional: You can log or display something when speech input begins
-            }
+                   }
 
             override fun onRmsChanged(rmsdB: Float) {
-                // Optional: You can log or display RMS changes (volume level)
-            }
+                    }
 
             override fun onBufferReceived(buffer: ByteArray?) {
-                // Optional: Handle audio buffer data
-            }
+                    }
 
             override fun onEndOfSpeech() {
-                // Optional: You can log or display something when speech input ends
-            }
+                   }
 
             override fun onEvent(eventType: Int, params: Bundle?) {
-                // Optional: Handle any special events (if needed)
-            }
+                    }
 
             override fun onPartialResults(partialResults: Bundle?) {
-                // Optional: Handle partial results from speech recognition
-            }
+                 }
         }
         speechRecognizer.setRecognitionListener(recognitionListener)
 
-        // Set up dialer buttons (same as before)
         d1.setOnClickListener { dialNumber += "1"; dialview.text = dialNumber }
         d2.setOnClickListener { dialNumber += "2"; dialview.text = dialNumber }
         d3.setOnClickListener { dialNumber += "3"; dialview.text = dialNumber }
@@ -143,12 +137,21 @@ class HomeFragment : Fragment() {
     // Basic sentiment analysis
     private fun analyzeSentiment(text: String) {
         val sentimentResult = when {
-            text.contains("happy", ignoreCase = true) || text.contains("good", ignoreCase = true) -> "Positive"
-            text.contains("sad", ignoreCase = true) || text.contains("angry", ignoreCase = true) -> "Negative"
+            text.contains("happy", ignoreCase = true) || text.contains("good", ignoreCase = true) -> "Happy"
+            text.contains("sad", ignoreCase = true) || text.contains("worried", ignoreCase = true) -> "Sad"
+            text.contains("bored", ignoreCase = true) || text.contains("boring", ignoreCase = true) -> "Boredom"
+            text.contains("Wow", ignoreCase = true) || text.contains("my god", ignoreCase = true) -> "Surprise"
+            else -> "Neutral"
+        }
+        val suggestionRes = when {
+            text.contains("happy", ignoreCase = true) || text.contains("good", ignoreCase = true) -> "You seem happy! Want to play a feel-good song?"
+            text.contains("sad", ignoreCase = true) || text.contains("worried", ignoreCase = true) -> "Feeling low? How about a relaxing lo-fi track to calm you down?"
+            text.contains("bored", ignoreCase = true) || text.contains("boring", ignoreCase = true) -> "Bored? Let’s play a quick game or check out something fun online!"
+            text.contains("Wow", ignoreCase = true) || text.contains("my god", ignoreCase = true) -> "Whoa! That sounds surprising! Want to share it with a friend?"
             else -> "Neutral"
         }
 
-        // Update the UI with the detected mood
         moodLabel.text = "Mood: $sentimentResult"
+        suggestion.text = "$suggestionRes"
     }
 }
