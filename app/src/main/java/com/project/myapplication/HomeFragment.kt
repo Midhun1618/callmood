@@ -49,6 +49,7 @@ class HomeFragment : Fragment() {
         dialview = view.findViewById(R.id.dialview)
         moodLabel = view.findViewById(R.id.moodLabel)
         suggestion = view.findViewById(R.id.suggestion)
+        moodLabel.text = " "
 
         d1 = view.findViewById(R.id.d1)
         d2 = view.findViewById(R.id.d2)
@@ -64,7 +65,6 @@ class HomeFragment : Fragment() {
         backspace = view.findViewById(R.id.backspace)
         dialnow = view.findViewById(R.id.dialnow)
 
-        // Initialize SpeechRecognizer
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
         recognitionListener = object : RecognitionListener {
             override fun onResults(results: Bundle?) {
@@ -124,7 +124,8 @@ class HomeFragment : Fragment() {
         }
 
         dialnow.setOnClickListener {
-            // Start speech recognition
+
+            moodLabel.text = "Mood:Analysing.."
             val recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
             recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
@@ -134,24 +135,27 @@ class HomeFragment : Fragment() {
         return view
     }
 
-    // Basic sentiment analysis
     private fun analyzeSentiment(text: String) {
+        val lowerText = text.lowercase()
+
         val sentimentResult = when {
-            text.contains("happy", ignoreCase = true) || text.contains("good", ignoreCase = true) -> "Happy"
-            text.contains("sad", ignoreCase = true) || text.contains("worried", ignoreCase = true) -> "Sad"
-            text.contains("bored", ignoreCase = true) || text.contains("boring", ignoreCase = true) -> "Boredom"
-            text.contains("Wow", ignoreCase = true) || text.contains("my god", ignoreCase = true) -> "Surprise"
-            else -> "Neutral"
-        }
-        val suggestionRes = when {
-            text.contains("happy", ignoreCase = true) || text.contains("good", ignoreCase = true) -> "You seem happy! Want to play a feel-good song?"
-            text.contains("sad", ignoreCase = true) || text.contains("worried", ignoreCase = true) -> "Feeling low? How about a relaxing lo-fi track to calm you down?"
-            text.contains("bored", ignoreCase = true) || text.contains("boring", ignoreCase = true) -> "Bored? Let’s play a quick game or check out something fun online!"
-            text.contains("Wow", ignoreCase = true) || text.contains("my god", ignoreCase = true) -> "Whoa! That sounds surprising! Want to share it with a friend?"
+            lowerText.contains("happy") || lowerText.contains("good") || lowerText.contains("great") || lowerText.contains("excited") -> "Happy"
+            lowerText.contains("sad") || lowerText.contains("worried") || lowerText.contains("upset") || lowerText.contains("depressed") -> "Sad"
+            lowerText.contains("bored") || lowerText.contains("boring") || lowerText.contains("nothing") || lowerText.contains("dull") -> "Boredom"
+            lowerText.contains("wow") || lowerText.contains("my god") || lowerText.contains("unbelievable") || lowerText.contains("really") -> "Surprise"
             else -> "Neutral"
         }
 
+        val suggestionRes = when (sentimentResult) {
+            "Happy" -> "You seem happy! Want to play a feel-good song?"
+            "Sad" -> "Feeling low? How about a relaxing lo-fi track to calm you down?"
+            "Boredom" -> "Bored? Let’s play a quick game or check out something fun online!"
+            "Surprise" -> "Whoa! That sounds surprising! Want to share it with a friend?"
+            else -> " "
+        }
+
         moodLabel.text = "Mood: $sentimentResult"
-        suggestion.text = "$suggestionRes"
+        suggestion.text = suggestionRes
     }
+
 }

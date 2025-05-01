@@ -15,6 +15,7 @@ import android.widget.Toast
 
 
 class SettingsFragment : Fragment() {
+    lateinit var developer : Button
 
 
     override fun onCreateView(
@@ -22,6 +23,14 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
+
+        developer = view.findViewById(R.id.kyd)
+
+        developer.setOnClickListener {
+            val url = "https://midhunkp.netlify.app"
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+        }
 
         return view
     }
