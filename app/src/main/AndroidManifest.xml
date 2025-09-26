@@ -9,8 +9,6 @@
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
 
 
-    <!-- Permission for managing phone calls (Deprecated) -->
-    <!-- <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" /> -->
 
     <application
         android:allowBackup="true"

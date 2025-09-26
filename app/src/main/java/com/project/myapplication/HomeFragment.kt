@@ -153,7 +153,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun predictMood(audioData: FloatArray): String {
-        val input = arrayOf(audioData)
+        val input15600 = FloatArray(15600)
+        for (i in input15600.indices) {
+            input15600[i] = if (i < audioData.size) audioData[i] else 0f
+        }
+
+        val input = arrayOf(input15600)
         val output = Array(1) { FloatArray(521) }
         tfliteInterpreter.run(input, output)
 
@@ -168,6 +173,7 @@ class HomeFragment : Fragment() {
             else -> "Neutral"
         }
     }
+
 
     // --- Update UI and Timeline ---
     private fun updateMoodTimeline(mood: String) {
@@ -187,7 +193,6 @@ class HomeFragment : Fragment() {
     }
 
     companion object {
-        // Load this from a CSV / hardcode as array of 521 YAMNet class names
         val yamnetClassNames = arrayOf(
             "Speech",
             "Child speech, kid speaking",
