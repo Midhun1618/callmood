@@ -17,7 +17,6 @@ import android.widget.Toast
 class SettingsFragment : Fragment() {
     lateinit var developer : Button
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

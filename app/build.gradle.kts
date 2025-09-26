@@ -38,29 +38,21 @@ android {
 }
 
 dependencies {
-    // AndroidX Libraries
+    // AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
-    // Testing Libraries
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-
-    // TensorFlow Lite and Audio Libraries
+    // TensorFlow Lite
+    implementation(libs.tensorflow.lite)
+    implementation(libs.tensorflow.lite.support)
     implementation(libs.tensorflow.lite.task.audio)
 
-    // TarsosDSP for Audio Processing
+    implementation("be.tarsos:dsp:2.4")
 
-    implementation(libs.tensorflow.lite) {
-        exclude(group = "org.tensorflow", module = "tensorflow-lite-support")
-    }
-    implementation(libs.tensorflow.lite.support) {
-        exclude(group = "org.tensorflow", module = "tensorflow-lite")
-    }
-
-
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.espresso.core)
 }
