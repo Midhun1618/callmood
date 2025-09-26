@@ -50,7 +50,8 @@ dependencies {
     implementation(libs.tensorflow.lite.support)
     implementation(libs.tensorflow.lite.task.audio)
 
-    implementation("be.tarsos:dsp:2.4")
+
+    implementation(files("libs/TarsosDSP-Android-2.4.jar"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
